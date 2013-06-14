@@ -1,0 +1,149 @@
+/**
+ * Created with JetBrains WebStorm.
+ * User: huangzhi
+ * Date: 13-6-1
+ * Time: 下午2:52
+ * To change this template use File | Settings | File Templates.
+ */
+var nosqlProxy = require("./../db/nosqlProxy"),
+    mysqlProxy = require("./../db/mysqlProxy"),
+    async = require ('async'),
+    logger = require("../logger").getLogger(),
+    self = this,
+    _ = require("underscore"),
+    base = require("./base");
+function Action(){
+}
+Action.prototype.do = function(req, res, next){
+    var params = req.params;
+    var that = this;
+    var deleteId;
+    //删除两个对象之间的关系
+    if(params.masterId && params.relation && params.subId){
+        //查找主ID表信息
+        //查询从ID表信息
+        //判断是否能够删除
+        //更新主对象信息
+        //更新从对象信息关系信息
+        deleteId = params.subId;
+        var queryRouter = function(callback){
+            base.queryRouter.call(that,deleteId,callback);
+        };
+        var getSubRecord = base.getRecordByID;
+
+        async.waterfall(
+            [base.initDBConn,queryRouter,getSubRecord,updateSubRecord],
+            function(err,newRecord){
+                if(err){
+                    doResopnse(res,records);
+                }else{
+                    doResopnse(res,deleteId);
+                }
+            }
+        );
+
+        function updateSubRecord(table,record,callback){
+            var  relationArray = record[params.relation];
+            if(relationArray && Object.prototype.toString.call(relationArray) === '[object Array]'){
+                for(var i=0;i<relationArray.length;i++){
+                    if(relationArray[i][id] == params.masterId){
+                        relationArray = relationArray.splice(i,1);
+                    }
+                }
+            }
+            var updateData = {};
+            updateData[params.relation] =   relationArray;
+            nosqlProxy.update(deleteId,table,updateData,function(err,updateResult){
+                if(err){
+                    doError(callback,err);
+                }else{
+                    //输出响应信息
+                    callback(null,table);
+                }
+            });
+
+        }
+
+    }
+    //查询ID
+    else if(params.id){
+        //从router表中查找表信息和分区信息
+        //从对应的表和分区中查找对象信息
+        deleteId = params.id;
+        var queryRouter = function(callback){
+            base.queryRouter.call(that,params.id,callback);
+        };
+        async.waterfall(
+            [base.initDBConn,queryRouter,adjustDendency,deleteSubRecord],
+            function(err,result){
+                if(err){
+                    doResopnse(res,err);
+                }else{
+                    //删除路由信息
+                   mysqlProxy.deleteRouter(deleteId,function(err,result){
+                       if(err){
+                           doResopnse(res,err);
+                       }else{
+                           doResopnse(res,deleteId);
+                       }
+                   })
+
+                }
+            }
+        );
+    }
+
+    //分解步骤
+    function querySubTable(masterTabel,callback){
+        mysqlProxy.queryRouter(deleteId,function(err,subTable){
+            if(err){
+                doError(callback,err)
+            }else{
+                callback(null,masterTabel,subTable);
+            }
+        });
+    }
+    function adjustDendency(masterTable,subTable,callback){
+        //如果有被其他数据关联则不允许删除
+        //查找元数据表，找到当前与table有关联关系的表
+        nosqlProxy.get(subTable,"metaTable",function(err,meta){
+            if(err){
+                doError(callback,err)
+            }
+            nosqlProxy.query(meta.name,function(record){
+                if(record[subTable]){
+                    for(var i=0;i<record[subTable].length;i++){
+                        if(record[subTable][i].id == params.subId){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },function(err,result){
+                if(err){
+                    doError(callback,err)
+                }
+                if(result.length>0){
+                    //不允许删除
+                    callback({code:403});
+                }else{
+                    //允许删除
+                    callback(null,masterTable,subTable);
+                }
+            });
+        });
+    }
+    function deleteSubRecord(masterTable,subTable,callback){
+        nosqlProxy.delete(deleteId,subTable,function(err){
+            if(err){
+                doError(callback,err)
+            }else{
+                //删除成功
+                callback(null,masterTable,subTable);
+            }
+        })
+    }
+}
+
+
+module.exports = new Action();

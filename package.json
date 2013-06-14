@@ -1,0 +1,26 @@
+{
+    "name": "planxcrm-server",
+    "version": "0.0.1",
+    "dependencies": {
+        "connect": "2.7.10",
+        "log4js": "*",
+        "underscore": "*",
+        "rethinkdb":"*",
+        "mysql":"*",
+        "mysql-queues":"*",
+        "async":"*"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.1.1",
+        "grunt-contrib-nodeunit": "~0.1.2",
+        "grunt-contrib-uglify": "~0.2.0",
+        "grunt-contrib-cssmin": "~0.6.0",
+        "mocha":"*",
+        "sinon":"*"
+    },
+    "engines": {
+        "node": "0.8.x",
+        "npm": "1.1.x"
+    }
+}
