@@ -23,8 +23,8 @@ RethinkdbProxy.prototype.get = function(id,table,callback){
     })
 }
 
-RethinkdbProxy.prototype.update = function(table,record,callback){
-    self.r.table(table).get(record.id).update(record).run(self.conn, function(err, result){
+RethinkdbProxy.prototype.update = function(id,table,record,callback){
+    self.r.table(table).get(id).update(record).run(self.conn, function(err, result){
         if(err) {
             logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
             callback(err);
@@ -67,13 +67,15 @@ RethinkdbProxy.prototype.query = function(table,filter,callback){
             self.r.table(table).filter(filter).run(self.conn,function(err, rows){
                 if(err) {
                     logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
-                    callback(err);
+                    doError(callback,err);
                 }
                 else {
                     rows.toArray(function(err, result) {
-                        if(err) doError(callback,err);
-
-                        callback(null,result);
+                        if(err) {
+                            doError(callback,err);
+                        }else{
+                            callback(null,result);
+                        }
                     })
                 }
             });
@@ -85,9 +87,12 @@ RethinkdbProxy.prototype.query = function(table,filter,callback){
                 }
                 else {
                     rows.toArray(function(err, result) {
-                        if(err) doError(callback,err);
+                        if(err){
+                            doError(callback,err);
+                        }else{
+                            callback(null,result);
+                        }
 
-                        callback(null,result);
                     })
                 }
             });

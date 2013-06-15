@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <title>Object Management</title>
+    <style>
+        body {
+            width: 35em;
+            margin: 0 auto;
+            font-family: Tahoma, Verdana, Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border: 1px solid #C3C3C3;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #C3C3C3;
+            padding: 3px;
+        }
+    </style>
+    <script src="lib/jquery-1.8.3.min.js"></script>
+    <script src="lib/handlebars-1.0.rc.1.js"></script>
+    <script src="lib/jquery.ba-hashchange.min.js"></script>
+</head>
+<body>
+<h1>对象管理</h1>
+<div id="title"></div>
+<select id="method">
+    <option value="GET">GET</option>
+    <option value="POST">POST</option>
+    <option value="DELETE">DELETE</option>
+    <option value="PUT">PUT</option>
+</select>
+http://127.0.0.1:3000/<input id="url" value="0" style="width: 200px;"><br/>
+<textarea id="obj" rows="10" cols="80" disabled="true"></textarea>
+
+<input type="button" id="Submit" value="提交">
+
+<div id="result"></div>
+<div id="buttom"></div>
+
+<script>
+    var currentID = "";
+    var template = {};
+
+    function ShowPage(type, content) {
+        var html = template[type](content);
+        $("#result").append(html);
+        window.scrollTo(0, $("#buttom").offset().top);
+    }
+
+    function Object2HTML(obj) {
+        var type = Object.prototype.toString.call(obj);
+        if (type != "[object Object]" && type != "[object Array]")
+            return obj;
+
+        var isobj = type === "[object Object]";
+        var ret = '<table>';
+        for(var key in obj) {
+            var value = obj[key];
+
+            if (isobj)
+                ret += '<tr><td width="64px">' + key + "</td>";
+            else
+                ret += '<tr><td width="24px">' + (parseInt(key)+0) + "</td>";
+            ret += '<td style="padding:0px">' + Object2HTML(value) + "</td>";
+            ret += "</tr>";
+        }
+        return ret + "</table>";
+    }
+
+    $("#Submit").click(function() {
+        var url = "http://127.0.0.1:3000/" + $("#url").val();
+        var method = $("#method").val();
+        var obj = $("#obj").val();
+        var setting = {url: url, type: method};
+        if (method == "POST" || method == "PUT") {
+            setting.contentType = "application/json";
+            setting.data = obj;
+        }
+
+        $.ajax(setting)
+                .done(function(data) {
+                    $("#result").html(Object2HTML(data));
+                    //window.scrollTo(0, $("#buttom").offset().top);
+                })
+                .fail(function(xhr) {
+                    $("#result").html('<span style="color:red;"><b>[' + xhr.status + ']</b> ' + xhr.responseText + '</span>');
+                });
+    });
+
+    var title = {
+        "GET": "查询对象",
+        "POST": "创建对象/关系",
+        "PUT": "修改对象/关系",
+        "DELETE": "删除对象"
+    };
+    $("#title").html(title["GET"]);
+
+    $("#method").change(function() {
+        var method = $(this).val();
+        if (method == "GET" || method == "DELETE") {
+            $("#obj").attr('disabled', true);
+        } else {
+            $("#obj").attr('disabled', false);
+        }
+        $("#title").html(title[method]);
+    });
+
+    function addObject(url, obj, params) {
+        //$.ajax({url: url, type: "POST", data: obj, contentType: "application/json"})
+        $.ajax({url: url, type: "POST", data: obj})
+                .done(function(data) {
+                    $("#result").append(data);
+                });
+    }
+
+    function deleteObject(url, params) {
+        $.ajax({url: url, type: "DELETE"})
+                .done(function(data) {
+                    $("#result").append(data);
+                });
+    }
+
+    function updateObject(url, obj, params) {
+        $.ajax({url: url, type: "PUT", data: obj, contentType: "application/json"})
+                .done(function(data) {
+                    $("#result").append(data);
+                });
+    }
+
+</script>
+</body>
+</html>

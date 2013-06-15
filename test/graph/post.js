@@ -4,6 +4,7 @@ var assert = require("assert"),
     mysql = require('mysql'),
     nosqlProxy = require("./../../src/db/nosqlProxy"),
     sinon = require("sinon");
+global.nodeID = 1;
 
 var post = require("./../../src/graph/post");
 describe('DataBaseUtilTest', function(){
@@ -29,12 +30,24 @@ describe('DataBaseUtilTest', function(){
                 },
                 body:{
                    "name":"美容部"
+                },
+                getHeader:function(){
+                    return "";
+                },
+                setHeader:function(){
+
                 }
             };
             var res = {
                 end:function(msg){
                     done();
-                    assert(msg.name == "美容部")
+                    assert(JSON.parse(msg).name == "美容部")
+                },
+                getHeader:function(){
+                    return "";
+                },
+                setHeader:function(){
+
                 }
             }
             var next = {
@@ -65,12 +78,24 @@ function initEnterprise(callback){
                         },
                         body:{
                             "name":"名轩美容美发中心"
+                        },
+                        getHeader:function(){
+                            return "";
+                        },
+                        setHeader:function(){
+
                         }
                     };
                     var res = {
                         end:function(msg){
                             console.log(msg);
                             callback(null,msg);
+                        },
+                        getHeader:function(){
+                            return "";
+                        },
+                        setHeader:function(){
+
                         }
                     }
                     var next = {

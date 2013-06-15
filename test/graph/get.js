@@ -34,12 +34,24 @@ describe('Graph get', function(){
                 var req = {
                     params : {
                         id:getId
+                    },
+                    getHeader:function(){
+
+                    },
+                    setHeader:function(){
+
                     }
                 };
                 var res = {
                     end:function(result){
                         done();
                         assert(result.id == getId)
+                    },
+                    getHeader:function(){
+
+                    },
+                    setHeader:function(){
+
                     }
                 }
                 var next = {

@@ -13,8 +13,6 @@ describe('Mysql', function(){
             });
         })
     });
-
-
     describe('#updateRouter()', function(){
         before(function(){
         });

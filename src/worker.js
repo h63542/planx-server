@@ -35,15 +35,24 @@ function allowCrossDomain(req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Content-Type, X-HTTP-Method, X-HTTP-METHOD-OVERRIDE');
     res.setHeader('Access-Control-Max-Age', '10');
-
     // intercept OPTIONS method
     if ('OPTIONS' == req.method) {
-        res.send(200);
+        res.end("POST, GET, PUT, DELETE");
     }
     else {
         next();
     }
 };
+
+function statistics(req, res, next){
+    var beginTime = (new Date()).getTime();
+    var requestId = nodeID+"-"+beginTime;
+    res.setHeader("beginTime",beginTime);
+    res.setHeader("requestId",requestId);
+    logger.debug("["+req.url+" "+req.method+"]"+"nodeId:"+nodeID+" request beigin!");
+    next();
+}
+
 
 function setCommonHeader(req, res, next){
     res.setHeader('Keep-Alive', 'timeout=1, max=100');
@@ -52,16 +61,17 @@ function setCommonHeader(req, res, next){
 }
 
 void main(function(){
-    global.nodeID = 1;
     process.on('SIGINT'  ,aboutExit)
     process.on('SIGTERM' ,aboutExit)
     var connectRoute = require('./router'),
         connect = require('connect');
         app = connect();
-    console.log(allowCrossDomain);
-
     app.use(connect.bodyParser())
+        .use(connect.timeout(1000*3))
+        .use(connect.static(__dirname + '/../public'))
         .use(connect.compress())
+       .use(statistics)
+       .use(setCommonHeader)
        .use(allowCrossDomain)
        .use(connectRoute(function (router) {
         routerMap.initRouter(router);
@@ -69,6 +79,7 @@ void main(function(){
 
     process.on('message',function(m ,handle){
         if(handle){
+            global.nodeID = m.nodeId;
             app.listen(handle, function(err){
                 if(err){
                     output('worker listen error');

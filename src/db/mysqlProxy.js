@@ -31,21 +31,25 @@ function getUniqueId(callback){
         pool.getConnection(function(err, conn) {
             if(err){
                 logger.error(err);
+                conn.end();
                 callback(err,-1);
             }
             var sql = "UPDATE planx_graph.ticket_mutex SET value=LAST_INSERT_ID(value+1) WHERE name='ENTITY';"
             conn.query(sql,function(err){
                 if(err){
                     logger.error(err);
+                    conn.end();
                     callback(err,-1);
                 }
                 conn.query("SELECT LAST_INSERT_ID()",function(err,rows){
                     if(err){
                         logger.error(err);
+                        conn.end();
                         callback(err,-1);
                     }
                     getUniqueId.id = rows[0]["LAST_INSERT_ID()"];
                     var tmp = global.nodeID+""+process.pid+""+(new Date()).getMonth()+""+(new Date()).getDate()+""+(new Date()).getHours()+""+(new Date()).getMinutes()+""+(new Date()).getMilliseconds()+""+rows[0]["LAST_INSERT_ID()"];
+                    conn.end();
                     callback(null,tmp);
                 });
             });
@@ -71,18 +75,22 @@ function getUniqueId(callback){
 }
 
 function updateRouter(id,table,callback){
+
     pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
+            conn.end();
             callback(err,-1);
         }
         var sql = "INSERT planx_graph.record_router (id,tableName) values(?,?)";
         conn.query(sql,[id,table],function(err){
             if(err){
                 logger.error(err);
+                conn.end();
                 callback(err,-1);
             }
             else{
+                conn.end();
                 callback(null)
             }
         });
@@ -98,13 +106,15 @@ function queryRouter(id,callback){
         conn.query(sql,[id],function(err,rows){
             if(err){
                 logger.error(err);
+                conn.end();
                 callback(err,-1);
             }
             else{
                 if(rows.length>0){
+                    conn.end();
                     callback(null,rows[0].tableName)
                 }else{
-                    console.log(id);
+                    conn.end();
                     callback({code:404,msg:id+" not exist!"});
                 }
             }
@@ -116,15 +126,18 @@ function deleteRouter(id,callback){
     pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
+            conn.end();
             callback(err,-1);
         }
         var sql = "delete FROM planx_graph.record_router WHERE id = ?";
         conn.query(sql,[id],function(err,rows){
             if(err){
                 logger.error(err);
+                conn.end();
                 callback(err,-1);
             }
             else{
+                conn.end();
                 callback(null,id)
             }
         });

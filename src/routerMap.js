@@ -13,7 +13,7 @@ var graphGet = require("./graph/get").do,
 
 function initRouter(router){
     router.get('/favicon.ico', function(req,res,next){
-
+        res.end("");
     });
     router.get('/:id', graphGet);
     router.get('/:id/:relation',graphGet);

@@ -8,7 +8,6 @@
 
 global.doError = doError;
 global.doResopnse = doResopnse;
-global.nodeID = 1;
 var logger = require("./logger").getLogger();
 
 function doError(callback,err){
@@ -16,9 +15,13 @@ function doError(callback,err){
     logger.error(err.stack);
     callback(err);
 }
-function doResopnse(res,jsonObj){
+function doResopnse(req,res,jsonObj){
+    var executeTime = new Date().getTime()-res.getHeader("beginTime");
+    res.setHeader("executeTime",executeTime);
+    var requestId = res.getHeader("requestId");
     var jsons = JSON.stringify(jsonObj);
-    res.setHeader('Content-Type', 'application/json');
+    logger.debug(req.url+" "+req.method+" finished,executeTime:"+executeTime);
+    res.setHeader('Content-Type', 'application/json;charset=UTF-8');
     res.setHeader('Content-Length', jsons.length);
     res.end(jsons);
 }

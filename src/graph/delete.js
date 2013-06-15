@@ -35,9 +35,9 @@ Action.prototype.do = function(req, res, next){
             [base.initDBConn,queryRouter,getSubRecord,updateSubRecord],
             function(err,newRecord){
                 if(err){
-                    doResopnse(res,records);
+                    doResopnse(req,res,records);
                 }else{
-                    doResopnse(res,deleteId);
+                    doResopnse(req,res,deleteId);
                 }
             }
         );
@@ -77,14 +77,14 @@ Action.prototype.do = function(req, res, next){
             [base.initDBConn,queryRouter,adjustDendency,deleteSubRecord],
             function(err,result){
                 if(err){
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
                     //删除路由信息
                    mysqlProxy.deleteRouter(deleteId,function(err,result){
                        if(err){
-                           doResopnse(res,err);
+                           doResopnse(req,res,err);
                        }else{
-                           doResopnse(res,deleteId);
+                           doResopnse(req,res,deleteId);
                        }
                    })
 

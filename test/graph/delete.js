@@ -71,6 +71,12 @@ describe('Graph delete', function(){
                         masterId:enterpriseId,
                         subId:delId,
                         relation:""
+                    },
+                    getHeader:function(){
+
+                    },
+                    setHeader:function(){
+
                     }
                 };
 
@@ -80,6 +86,12 @@ describe('Graph delete', function(){
                         done();
                         console.log(result);
                         assert(result == delId)
+                    },
+                    getHeader:function(){
+
+                    },
+                    setHeader:function(){
+
                     }
                 }
                 var next = {

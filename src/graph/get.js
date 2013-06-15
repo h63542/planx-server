@@ -19,7 +19,9 @@ Action.prototype.do = function(req, res, next){
     //查询关系
     //查出id对象对应的relation列表
     //再更具relation列表查出relation对象对应的详细信息
+    var queryBeginTime = (new Date()).getTime();
     if(params.id && params.relation){
+
         //查询主对象表
         //查询主对象
         //过滤出主对象param.relation字段关联的数据
@@ -27,22 +29,46 @@ Action.prototype.do = function(req, res, next){
 
         var queryRouter = function(callback){
             base.queryRouter.call(that,params.id,callback);
+
         };
         async.waterfall(
-            [base.initDBConn,queryRouter,getMasterRecord,getAntidependences,filterRecord],
+            [base.initDBConn,queryRouter,getMasterRecord,querySubRecord],
             function(err,records){
                 if(err){
                     console.log(err.stack);
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
-                    doResopnse(res,records);
+                    doResopnse(req,res,records);
                 }
             }
         );
+
+        function querySubRecord(masterTable,masterRecord,callback){
+            nosqlProxy.query(params.relation,function(record){
+                return true;
+            },function(err,result){
+                result = _.filter(result,function(record){
+                    var relationDatas = record[masterTable];
+                    for(var i=0;i<relationDatas.length;i++){
+                        if(relationDatas[i].id == params.id){
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                if(err){
+                    doError(callback,err)
+                }else{
+                    callback(null,result);
+                }
+            })
+        }
+
         function filterRecord(masterRecord,callback){
             var relationDatas = masterRecord[params.relation];
             if(!relationDatas || relationDatas.length<=0){
                 callback(null,[]);
+                return;
             }
             nosqlProxy.query(params.relation,function(record){
                 return true;
@@ -78,9 +104,9 @@ Action.prototype.do = function(req, res, next){
                 if(err){
                     logger.error(err);
                     logger.error(err.stack);
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
-                    doResopnse(res,record);
+                    doResopnse(req,res,record);
                 }
             }
         );
@@ -90,13 +116,15 @@ Action.prototype.do = function(req, res, next){
         nosqlProxy.get(masterTable,"metaTable",function(err,meta){
             if(err){
                 doError(callback,err)
+                return;
             }
             var antidependences = {};
             async.each(meta.antidependences,getAntiDependencies,function(err){
                 if(err){
                     doError(callback,err)
+                }else{
+                    callback(null,masterRecord);
                 }
-                callback(null,masterRecord);
             })
             function getAntiDependencies(table,callback){
                 nosqlProxy.getConn(function(err,conn){

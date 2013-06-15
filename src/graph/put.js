@@ -16,18 +16,23 @@ function Action(){
 
 Action.prototype.do = function(req, res, next){
     var params = req.params,
-        putData = req.body;
+        putData = req.body,
+        that = this;
     if(params.id){
+        var updateId = params.id;
         //获取ID对应的表信息
         //更新表数据
-        var queryRouter = base.queryRouter;
+        var queryRouter = function(callback){
+            base.queryRouter.call(that,params.id,callback);
+        };
+
         async.waterfall(
             [base.initDBConn,queryRouter,updateRecord,getNewRecord],
             function(err,newRecord){
                 if(err){
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
-                    doResopnse(res,newRecord);
+                    doResopnse(req,res,newRecord);
                 }
             }
         );
@@ -44,7 +49,7 @@ Action.prototype.do = function(req, res, next){
         }
 
         function getNewRecord(table,callback){
-            nosqlProxy.get(id,table,function(err,record){
+            nosqlProxy.get(updateId,table,function(err,record){
                 if(err){
                     doError(callback,err)
                 }else{

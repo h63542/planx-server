@@ -8,7 +8,8 @@
         "rethinkdb":"*",
         "mysql":"*",
         "mysql-queues":"*",
-        "async":"*"
+        "async":"*",
+        "passport":"*"
     },
     "devDependencies": {
         "grunt": "~0.4.1",

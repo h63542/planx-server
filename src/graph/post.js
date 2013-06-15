@@ -37,9 +37,9 @@ Action.prototype.do = function(req, res, next){
             [base.initDBConn,queryRouter,getMasterRecord,getUniqueId,doInsertNewRecord,updateRouter,updateMasterRecord],
             function(err,newRecord){
                 if(err){
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
-                    doResopnse(res,newRecord);
+                    doResopnse(req,res,newRecord);
                 }
             }
         );
@@ -57,9 +57,9 @@ Action.prototype.do = function(req, res, next){
             [init,getUniqueId,doInsertNewRecord,updateRouter],
             function(err,newRecord){
                 if(err){
-                    doResopnse(res,err);
+                    doResopnse(req,res,err);
                 }else{
-                    doResopnse(res,newRecord);
+                    doResopnse(req,res,newRecord);
                 }
             }
         );
@@ -122,7 +122,7 @@ Action.prototype.do = function(req, res, next){
         });
     }
     function updateMasterRecord(mastertable,newrecord,masterRecord,callback){
-        nosqlProxy.update(mastertable,masterRecord,function(err,updateResult){
+        nosqlProxy.update(masterRecord["id"],mastertable,masterRecord,function(err,updateResult){
             if(err){
                 console.log(err);
                 // 如果失败记录错误日志，同时删除已经添加的记录
