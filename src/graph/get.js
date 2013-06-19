@@ -14,6 +14,8 @@ var nosqlProxy = require("./../db/nosqlProxy"),
 function Action(){
 }
 Action.prototype.do = function(req, res, next){
+    console.log(req.user);
+
     var that = this;
     var params = req.params;
     //查询关系

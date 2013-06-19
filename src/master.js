@@ -2,9 +2,9 @@ var net = require('net');
 var cp = require('child_process');
 
 var PORT = 3000;
-var WORKER_NUMBER = 3;
+var WORKER_NUMBER = 1;
 var GRACE_EXIT_TIME = 2000;//2s
-var WORKER_PATH = __dirname + '/worker.js';
+var WORKER_PATH = __dirname + '/expressworker.js';
 var WORKER_HEART_BEAT = 10*1000;//10s, update memory ,etc
 
 function output(str){

@@ -19,6 +19,7 @@ Action.prototype.do = function(req, res, next){
         putData = req.body,
         that = this;
     if(params.id){
+
         var updateId = params.id;
         //获取ID对应的表信息
         //更新表数据

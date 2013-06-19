@@ -20,7 +20,6 @@ function doResopnse(req,res,jsonObj){
     res.setHeader("executeTime",executeTime);
     var requestId = res.getHeader("requestId");
     var jsons = JSON.stringify(jsonObj);
-    logger.debug(req.url+" "+req.method+" finished,executeTime:"+executeTime);
     res.setHeader('Content-Type', 'application/json;charset=UTF-8');
     res.setHeader('Content-Length', jsons.length);
     res.end(jsons);

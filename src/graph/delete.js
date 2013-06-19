@@ -13,6 +13,7 @@ var nosqlProxy = require("./../db/nosqlProxy"),
     _ = require("underscore"),
     base = require("./base");
 function Action(){
+
 }
 Action.prototype.do = function(req, res, next){
     var params = req.params;
@@ -30,7 +31,6 @@ Action.prototype.do = function(req, res, next){
             base.queryRouter.call(that,deleteId,callback);
         };
         var getSubRecord = base.getRecordByID;
-
         async.waterfall(
             [base.initDBConn,queryRouter,getSubRecord,updateSubRecord],
             function(err,newRecord){
@@ -41,7 +41,6 @@ Action.prototype.do = function(req, res, next){
                 }
             }
         );
-
         function updateSubRecord(table,record,callback){
             var  relationArray = record[params.relation];
             if(relationArray && Object.prototype.toString.call(relationArray) === '[object Array]'){
@@ -92,17 +91,7 @@ Action.prototype.do = function(req, res, next){
             }
         );
     }
-
     //分解步骤
-    function querySubTable(masterTabel,callback){
-        mysqlProxy.queryRouter(deleteId,function(err,subTable){
-            if(err){
-                doError(callback,err)
-            }else{
-                callback(null,masterTabel,subTable);
-            }
-        });
-    }
     function adjustDendency(masterTable,subTable,callback){
         //如果有被其他数据关联则不允许删除
         //查找元数据表，找到当前与table有关联关系的表
@@ -133,6 +122,7 @@ Action.prototype.do = function(req, res, next){
             });
         });
     }
+    //删除字表记录
     function deleteSubRecord(masterTable,subTable,callback){
         nosqlProxy.delete(deleteId,subTable,function(err){
             if(err){
