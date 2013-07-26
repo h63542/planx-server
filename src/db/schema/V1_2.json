@@ -9,157 +9,157 @@
                     "value":{
                         "action":"initMetaTable",
                         "params":[{
-                            "name":"enterprise",
+                            "id":"enterprise",
                             "dependencies":[]
                         },{
-                            "name":"authAccount",
+                            "id":"authAccount",
                             "dependencies":["role","enterprise"]
                         },{
-                            "name":"permission",
+                            "id":"permission",
                             "dependencies":["role"]
                         },{
-                            "name":"infoServiceDeliveryRecord",
+                            "id":"infoServiceDeliveryRecord",
                             "dependencies":["infoCategory","enterprise"]
                         },{
-                            "name":"infoServiceDeliveryTemplate",
+                            "id":"infoServiceDeliveryTemplate",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"department",
+                            "id":"department",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"empolyee",
+                            "id":"empolyee",
                             "dependencies":["workShift","enterprise","department"]
                         },{
-                            "name":"job",
+                            "id":"job",
                             "dependencies":["empolyee","enterprise"]
                         },{
-                            "name":"jobLevel",
+                            "id":"jobLevel",
                             "dependencies":["job","empolyee","enterprise"]
                         },{
-                            "name":"salaryRecord",
+                            "id":"salaryRecord",
                             "dependencies":["enterprise","empolyee"]
                         },{
-                            "name":"reward",
+                            "id":"reward",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"rewardRecord",
+                            "id":"rewardRecord",
                             "dependencies":["empolyee","enterprise"]
                         },{
-                            "name":"penalty",
+                            "id":"penalty",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"penaltyRecord",
+                            "id":"penaltyRecord",
                             "dependencies":["enterprise","empolyee"]
                         },{
-                            "name":"entSysConfig",
+                            "id":"entSysConfig",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"workShift",
+                            "id":"workShift",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"attendanceRecord",
+                            "id":"attendanceRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"schedulingRecord",
+                            "id":"schedulingRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"attendanceApply",
+                            "id":"attendanceApply",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"memberCard",
+                            "id":"memberCard",
                             "dependencies":["enterprise","memberCardCategory"]
                         },{
-                            "name":"memberCardCategory",
+                            "id":"memberCardCategory",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"newMemberCardBill",
+                            "id":"newMemberCardBill",
                             "dependencies":["enterprise","memberCard","empolyee"]
                         },{
-                            "name":"rechargeMemberBill",
+                            "id":"rechargeMemberBill",
                             "dependencies":["enterprise","memberCard","empolyee"]
                         },{
-                            "name":"cancelMemberBill",
+                            "id":"cancelMemberBill",
                             "dependencies":["enterprise","memberCard"]
                         },{
-                            "name":"exchangePointBill",
+                            "id":"exchangePointBill",
                             "dependencies":["enterprise","memberCard"]
                         },{
-                            "name":"memberCardBonusStrategy",
+                            "id":"memberCardBonusStrategy",
                             "dependencies":["enterprise","memberCardCategory"]
                         },{
-                            "name":"productCategory",
+                            "id":"productCategory",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"product",
+                            "id":"product",
                             "dependencies":["enterprise","productCategory","productBonusStrategy","warehouse","warehouseVoucher"]
                         },{
-                            "name":"serviceCategory",
+                            "id":"serviceCategory",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"service",
+                            "id":"service",
                             "dependencies":["enterprise","serviceCategory"]
                         },{
-                            "name":"gift",
+                            "id":"gift",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"supplier",
+                            "id":"supplier",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"purchaseRequestRecord",
+                            "id":"purchaseRequestRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"warehouseVoucherRecord",
+                            "id":"warehouseVoucherRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"deliveryVoucherRecord",
+                            "id":"deliveryVoucherRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"warehouse",
+                            "id":"warehouse",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"shelf",
+                            "id":"shelf",
                             "dependencies":["enterprise","warehouse"]
                         },{
-                            "name":"serviceBill",
+                            "id":"serviceBill",
                             "dependencies":["enterprise","memberCard"]
                         },{
-                            "name":"revAndExpSubject",
+                            "id":"revAndExpSubject",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"revAndExpRecord",
+                            "id":"revAndExpRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"bankAccount",
+                            "id":"bankAccount",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"trader",
+                            "id":"trader",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"traderApply",
+                            "id":"traderApply",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"order",
+                            "id":"order",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"orderRecord",
+                            "id":"orderRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"reservationRecord",
+                            "id":"reservationRecord",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"productBonusStrategy",
+                            "id":"productBonusStrategy",
                             "dependencies":["enterprise","job","product"]
                         },{
-                            "name":"serviceBonusStrategy",
+                            "id":"serviceBonusStrategy",
                             "dependencies":["enterprise","job","service"]
                         },{
-                            "name":"perfBonusRecord",
+                            "id":"perfBonusRecord",
                             "dependencies":["enterprise","employee","memberCard"]
                         },{
-                            "name":"penalty",
+                            "id":"penalty",
                             "dependencies":["enterprise"]
                         },{
-                            "name":"penalty",
+                            "id":"penalty",
                             "dependencies":["enterprise"]
                         }
                         ]

@@ -40,6 +40,7 @@ function allowCrossDomain(req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization,Origin, Accept, Content-Type, X-HTTP-Method, X-HTTP-METHOD-OVERRIDE');
     res.setHeader('Access-Control-Max-Age', '10');
+
     // intercept OPTIONS method
     if ('OPTIONS' == req.method) {
         res.end("POST, GET, PUT, DELETE");
@@ -73,10 +74,10 @@ void main(function(){
     app.set('views', __dirname + '/views');
     app.set('view engine', 'ejs');
     app.use(express.bodyParser())
-        .use(express.timeout(1000*3))
         .use(express.static(__dirname + '/../public'))
         .use(express.compress())
         .use(allowCrossDomain)
+        .use(statistics)
         .use(express.logger())
         .use(express.cookieParser())
         .use(express.methodOverride())

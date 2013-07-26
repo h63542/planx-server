@@ -9,7 +9,8 @@ var fs = require("fs"),
     cwd = process.cwd(),
     logger = require("../../logger").getLogger(),
     _ = require("underscore"),
-    nosqlProxy = require("../../db/nosqlProxy");
+    nosqlProxyFC = require("../dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
     self = this;
 
 function Migration(){
@@ -26,34 +27,37 @@ Migration.prototype.initMetaTable = function(conn,params,callback){
             if(!antidependences[item]){
                 antidependences[item] = [];
             }
-            antidependences[item].push(table.name);
+            antidependences[item].push(table.id);
         })
     });
     _.each(metaDatas,function(table){
-        table["antidependences"] = antidependences[table.name]?antidependences[table.name]:[];
+        table["antidependences"] = antidependences[table.id]?antidependences[table.id]:[];
     })
 
     nosqlProxy.getConn(function(err,conn){
         //插入数据
-        nosqlProxy.getR().db('planx_graph_r').tableList().run(conn,function(err,result){
+        nosqlProxy.tableList(function(err,result){
             if(result && result.indexOf("metaTable") == -1){
-                nosqlProxy.getR().db('planx_graph_r').tableCreate("metaTable",{"primaryKey":"name"}).run(conn, function(err,result){
+                nosqlProxy.tableCreate("metaTable",{"primaryKey":"name"},function(err,result){
                     if(err) {
                         logger.debug("[ERROR] initMetaTable: %s:%s\n%s", err.name, err.msg, err.message);
                         callback(err);
                         return;
                     }
-                    nosqlProxy.getR().table('metaTable').insert(metaDatas).run(conn, function(err,result){
+
+                    nosqlProxy.insert('metaTable',metaDatas,callback,function(err,result){
                         if(err) {
                             logger.debug("[ERROR] initMetaTable: %s:%s\n%s", err.name, err.msg, err.message);
                             callback(err);
+
                             return;
                         }
                         callback(null);
-                    })
+
+                    });
                 })
             }else{
-                nosqlProxy.getR().table('metaTable').insert(metaDatas).run(conn, function(err,result){
+                nosqlProxy.insert('metaTable',metaDatas,callback,function(err,result){
                     if(err) {
                         logger.debug("[ERROR] initMetaTable: %s:%s\n%s", err.name, err.msg, err.message);
                         callback(err);
@@ -62,11 +66,10 @@ Migration.prototype.initMetaTable = function(conn,params,callback){
                     }
                     callback(null);
 
-                })
+                });
             }
-            })
-        });
-
+        })
+    })
 }
 
 module.exports = new Migration();

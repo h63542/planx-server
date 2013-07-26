@@ -5,7 +5,9 @@
  * Time: 下午2:52
  * To change this template use File | Settings | File Templates.
  */
-var nosqlProxy = require("./../db/nosqlProxy"),
+var nosqlProxyFC = require("./../db/dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
+
     logger = require("../logger").getLogger(),
     async = require("async"),
     _ = require("underscore"),

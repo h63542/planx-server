@@ -1,15 +1,67 @@
-<form action="/login" method="post">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="username"/><br/>
+<link rel="stylesheet" href="/css/login.css"/>
+<link href="http://127.0.0.1:5000/lib/boo/css/lib/bootstrap.css" rel="stylesheet">
+<link href="http://127.0.0.1:5000/lib/boo/css/planx.min.css" rel="stylesheet">
+<div class="login-page">
+    <div class="login-center">
+        <div class="banner">
+            <div id="login-shape">
+                <span>
+                    <img src="/images/login-shape.png" alt=""/>
+                    <img src="/images/login-year.png" alt=""/>
+                    <img src="/images/login-shape.png" alt=""/>
+                </span>
+            </div>
+            <div id="login-title">
+                <img src="/images/login-title.png" alt=""/>
+            </div>
+        </div>
+        <form action="/login" method="post" id=“loginform”>
+            <div>
+                <input type="text" name="username" id="username" value="bob" placeholder="用户名"/><br/>
+            </div>
+            <div id=>
+                <input type="password" name="password" id="password" value="secret" placeholder="密码"/>
+            </div>
+            <div>
+                <a class="btn btn-orange icon48 fs-16" style="letter-spacing:1em;padding-left:2em" href="javascript:void(0);" onclick="login.submit()">登陆</a>
+            </div>
+        </form>
     </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password"/>
+    <div class="login-model">
+        <img src="/images/model01.png" alt="" id="login_model01" />
+        <img src="/images/model02.png" alt="" id="login_model02" style="display: none"/>
+        <img src="/images/model03.png" alt="" id="login_model03" style="display: none"/>
+
     </div>
-    <div>
-        <input type="submit" value="Submit"/>
+    <div class="login-footer">
+        <span id="about"></span>
+        <span id="mobile_access"></span>
+        <img src="/images/login-footer.png" alt=""/>
     </div>
-</form>
-<p><small>Hint - bob:secret</small></p>
-<p><small>Hint - joe:password</small></p>
+</div>
+<script src="http://127.0.0.1:5000/lib/boo/js/lib/jquery.js"></script>
+
+<script type="text/javascript">
+    var login = {
+        submit:function(){
+            document.forms[0].submit();
+        },
+        modelSlider:function(){
+            if(!login.modelSlider.count){
+                login.modelSlider.count = 0;
+            }
+            var no =  (login.modelSlider.count++)%3+1;
+            console.log(no);
+            $(".login-model>img").hide();
+            $("#login_model0"+no).show();
+        }
+    }
+    $(function(){
+        setInterval(login.modelSlider,1000*2);
+        var returnTo = "<%= returnTo %>";
+        if(returnTo === "undefined"){
+            window.location.href = "http://127.0.0.1:5000/login.html";
+        }
+    });
+
+</script>

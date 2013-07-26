@@ -59,6 +59,7 @@ function startServer(){
     var tcpServer = net.createServer();
     tcpServer.listen(PORT , function(){
         startWorker(tcpServer._handle);
+        tcpServer.close();
     });
 }
 

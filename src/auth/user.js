@@ -13,3 +13,4 @@ exports.info = [
     res.json({ user_id: req.user.id, name: req.user.name, scope: req.authInfo.scope })
   }
 ]
+exports.validate = [];

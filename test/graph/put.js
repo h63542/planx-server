@@ -2,7 +2,9 @@ var assert = require("assert"),
     async = require ('async'),
     env = require("./../../src/env"),
     mysql = require('mysql'),
-    nosqlProxy = require("./../../src/db/nosqlProxy"),
+    _ = require("underscore"),
+    nosqlProxyFC = require("./../../src/db/dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
     sinon = require("sinon");
 
 var put = require("./../../src/graph/put");
@@ -16,8 +18,9 @@ describe('Graph delete', function(){
 
     describe('#update data', function(){
         it('update by ID', function(done){
+            var oldCount = 0;
             //构造删除数据
-            nosqlProxy.query("department",function(record){
+            nosqlProxy.query("department",{},null,null,null,function(record){
                 return true;
             },function(err,rows){
                 if(err){
@@ -25,6 +28,17 @@ describe('Graph delete', function(){
                 }
                 if(rows.length>0){
                     var delId = rows[0].id;
+
+                    var newRecord = rows[0];
+
+                    if(!newRecord.updateCount || !_.isNumber(newRecord.updateCount)){
+                        newRecord.updateCount = 1;
+                    }else{
+                        oldCount = newRecord.updateCount;
+                        newRecord.updateCount = newRecord.updateCount+1;
+                    }
+
+
                     doupdate(delId,rows[0]);
                 }
             });
@@ -45,7 +59,7 @@ describe('Graph delete', function(){
                 var res = {
                     end:function(result){
                         done();
-                        assert(JSON.parse(result).id == delId)
+                        assert(JSON.parse(result).updateCount == oldCount+1)
                     },
                     getHeader:function(){
 

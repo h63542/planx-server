@@ -1,13 +1,15 @@
 var mysql = require('mysql')
     logger = require("../logger").getLogger();
-var pool  = mysql.createPool({
-    host     : '127.0.0.1',
-    port     : 3306,
-    user     : 'root',
-    password : '983711'
-});
 
-module.exports = {
+
+module.exports = MysqlProxy;
+
+function MysqlProxy(datasource){
+    this.databaseName = datasource.dbName;
+    this.pool  = mysql.createPool(datasource.dbserver);
+}
+
+MysqlProxy.prototype = {
     getConn:getConn,
     getUniqueId:getUniqueId,
     queryRouter:queryRouter,
@@ -15,8 +17,9 @@ module.exports = {
     deleteRouter:deleteRouter
 }
 
+
 function getConn(callback){
-    pool.getConnection(function(err, conn) {
+    that.pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
             callback(err,-1);
@@ -27,14 +30,15 @@ function getConn(callback){
 }
 
 function getUniqueId(callback){
+    var that = this;
     if(!getUniqueId.id){
-        pool.getConnection(function(err, conn) {
+        that.pool.getConnection(function(err, conn) {
             if(err){
                 logger.error(err);
                 conn.end();
                 callback(err,-1);
             }
-            var sql = "UPDATE planx_graph.ticket_mutex SET value=LAST_INSERT_ID(value+1) WHERE name='ENTITY';"
+            var sql = "UPDATE "+that.databaseName+".ticket_mutex SET value=LAST_INSERT_ID(value+1) WHERE name='ENTITY';"
             conn.query(sql,function(err){
                 if(err){
                     logger.error(err);
@@ -58,12 +62,12 @@ function getUniqueId(callback){
         setTimeout(function(){
             var tmp = global.nodeID+""+process.pid+""+(new Date()).getMonth()+""+(new Date()).getDate()+""+(new Date()).getHours()+""+(new Date()).getMinutes()+""+(new Date()).getMilliseconds()+""+(getUniqueId.id++);
             callback(null,tmp)
-            pool.getConnection(function(err, conn) {
+            that.pool.getConnection(function(err, conn) {
                 if(err){
                     logger.error(err);
                     callback(err,-1);
                 }
-                var sql = "UPDATE planx_graph.ticket_mutex SET value=LAST_INSERT_ID(value+1) WHERE name='ENTITY';"
+                var sql = "UPDATE "+that.databaseName+".ticket_mutex SET value=LAST_INSERT_ID(value+1) WHERE name='ENTITY';"
                 conn.query(sql,function(err){
                     if(err){
                         logger.error(err);
@@ -75,14 +79,14 @@ function getUniqueId(callback){
 }
 
 function updateRouter(id,table,callback){
-
-    pool.getConnection(function(err, conn) {
+    var that = this;
+    that.pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
             conn.end();
             callback(err,-1);
         }
-        var sql = "INSERT planx_graph.record_router (id,tableName) values(?,?)";
+        var sql = "INSERT "+that.databaseName+".record_router (id,tableName) values(?,?)";
         conn.query(sql,[id,table],function(err){
             if(err){
                 logger.error(err);
@@ -97,12 +101,13 @@ function updateRouter(id,table,callback){
     });
 }
 function queryRouter(id,callback){
-    pool.getConnection(function(err, conn) {
+    var that = this;
+    that.pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
             callback(err,-1);
         }
-        var sql = "SELECT tableName FROM planx_graph.record_router WHERE id = ?";
+        var sql = "SELECT tableName FROM "+that.databaseName+".record_router WHERE id = ?";
         conn.query(sql,[id],function(err,rows){
             if(err){
                 logger.error(err);
@@ -123,13 +128,14 @@ function queryRouter(id,callback){
 }
 
 function deleteRouter(id,callback){
-    pool.getConnection(function(err, conn) {
+    var that = this;
+    that.pool.getConnection(function(err, conn) {
         if(err){
             logger.error(err);
             conn.end();
             callback(err,-1);
         }
-        var sql = "delete FROM planx_graph.record_router WHERE id = ?";
+        var sql = "delete FROM "+that.databaseName+".record_router WHERE id = ?";
         conn.query(sql,[id],function(err,rows){
             if(err){
                 logger.error(err);

@@ -17,331 +17,331 @@
                 "dbName":"planx_graph_r",
                 "value":[
                     {
-                        "name":"metaTable",
+                        "id":"metaTable",
                         "option":{
                             "primaryKey":"name"
                         }
                     },
                     {
-                        "name":"authAccount",
+                        "id":"authAccount",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"permission",
+                        "id":"permission",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"role",
+                        "id":"role",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"operatorLog",
+                        "id":"operatorLog",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"infoServiceDeliveryRecord",
+                        "id":"infoServiceDeliveryRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"infoServiceDeliveryTemplate",
+                        "id":"infoServiceDeliveryTemplate",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"infoCategory",
+                        "id":"infoCategory",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"enterprise",
+                        "id":"enterprise",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"department",
+                        "id":"department",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"employee",
+                        "id":"employee",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"job",
+                        "id":"job",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"jobLevel",
+                        "id":"jobLevel",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"salaryRecord",
+                        "id":"salaryRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"reward",
+                        "id":"reward",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"rewardRecord",
+                        "id":"rewardRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"penalty",
+                        "id":"penalty",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"penaltyRecord",
+                        "id":"penaltyRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"entSysConfig",
+                        "id":"entSysConfig",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"workShift",
+                        "id":"workShift",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"attendanceRecord",
+                        "id":"attendanceRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"attendanceRecord",
+                        "id":"attendanceRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"schedulingRecord",
+                        "id":"schedulingRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"attendanceApply",
+                        "id":"attendanceApply",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"memberCard",
+                        "id":"memberCard",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"memberCardCategory",
+                        "id":"memberCardCategory",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"newMemberCardBill",
+                        "id":"newMemberCardBill",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"rechargeMemberBill",
+                        "id":"rechargeMemberBill",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"cancelMemberBill",
+                        "id":"cancelMemberBill",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"exchangePointBill",
+                        "id":"exchangePointBill",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"memberCardBonusStrategy",
+                        "id":"memberCardBonusStrategy",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"productCategory",
+                        "id":"productCategory",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"product",
+                        "id":"product",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"serviceCategory",
+                        "id":"serviceCategory",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"service",
+                        "id":"service",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"gift",
+                        "id":"gift",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"supplier",
+                        "id":"supplier",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"purchaseRequestRecord",
+                        "id":"purchaseRequestRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"warehouseVoucherRecord",
+                        "id":"warehouseVoucherRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"deliveryVoucherRecord",
+                        "id":"deliveryVoucherRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"warehouse",
+                        "id":"warehouse",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"shelf",
+                        "id":"shelf",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"serviceBill",
+                        "id":"serviceBill",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"revAndExpSubject",
+                        "id":"revAndExpSubject",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"revAndExpRecord",
+                        "id":"revAndExpRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"bankAccount",
+                        "id":"bankAccount",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"trader",
+                        "id":"trader",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"traderApply",
+                        "id":"traderApply",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"orderRecord",
+                        "id":"orderRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"reservationRecord",
+                        "id":"reservationRecord",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"productBonusStrategy",
+                        "id":"productBonusStrategy",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"serviceBonusStrategy",
+                        "id":"serviceBonusStrategy",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"losAgent",
+                        "id":"losAgent",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"losAgentGrade",
+                        "id":"losAgentGrade",
                         "option":{
                             "primaryKey":"id"
                         }
                     },
                     {
-                        "name":"losExtendContract",
+                        "id":"losExtendContract",
                         "option":{
                             "primaryKey":"id"
                         }

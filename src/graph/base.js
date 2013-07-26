@@ -5,8 +5,9 @@
  * Time: 下午10:07
  * To change this template use File | Settings | File Templates.
  */
-var nosqlProxy = require("./../db/nosqlProxy"),
-    mysqlProxy = require("./../db/mysqlProxy"),
+var dataProxyFC = require("./../db/dataProxyFC"),
+    nosqlProxy = dataProxyFC.getNoSqlProxy(dataProxyFC.C.DEFAULT_NOSQLDB),
+    mysqlProxy = dataProxyFC.getSqlProxy(dataProxyFC.C.DEFAULT_SQLDB),
     logger = require("./../logger").getLogger();
 module.exports = {
     initDBConn:initDBConn,

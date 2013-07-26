@@ -39,8 +39,10 @@ function initRouter(router){
         router.get('/login/authorize', login.authlogin);
         router.get('/dialog/authorize', oauth2.authorization);
         router.post('/dialog/authorize/decision', oauth2.decision);
+        router.get('/dialog/authorize/decision', oauth2.decision);
         router.post('/oauth/token', oauth2.token);
         router.get('/api/userinfo', user.info);
+        router.get('/api/validate', user.validate);
     }
 }
 

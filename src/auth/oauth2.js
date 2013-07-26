@@ -57,6 +57,18 @@ server.grant(oauth2orize.grant.code(function(client, redirectURI, user, ares, do
   });
 }));
 
+
+
+server.grant(oauth2orize.grant.token(function(client, user, ares, done) {
+    var code = utils.uid(16)
+    db.accessTokens.save(code,  user.id, client.id, function(err) {
+        if (err) { return done(err); }
+        done(null, code);
+    });
+}));
+
+
+
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
 // authorization request for verification.  If these values are validated, the
@@ -108,6 +120,14 @@ exports.authorization = [
     });
   }),
   function(req, res){
+    //白名单不需要确认流程，自身的的页面应用不需要确认，这里存在安全隐患，需要考虑使用https方式
+    if(req.oauth2.client.id === "1"){
+        var url = "/dialog/authorize/decision?response_type=code&client_id="+req.oauth2.client.id+"&redirect_uri="+req.oauth2.redirectURI+"&transaction_id="+req.oauth2.transactionID+
+                    "&allow=true";
+        res.redirect(url);
+        return;
+    }
+
     res.render('dialog', { transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client });
   }
 ]

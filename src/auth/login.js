@@ -10,7 +10,7 @@ exports.index = function(req, res) {
 };
 
 exports.loginForm = function(req, res) {
-    res.render('login');
+    res.render('login',{returnTo:req.session["returnTo"]});
 };
 
 
@@ -29,6 +29,7 @@ exports.logout = function(req, res) {
 exports.account = [
     login.ensureLoggedIn(),
     function(req, res) {
-        res.render('account', { user: req.user });
+
+        res.render('account', { user: req.user,test:req.session["test"] });
     }
 ]

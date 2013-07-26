@@ -5,8 +5,9 @@
  * Time: 下午2:52
  * To change this template use File | Settings | File Templates.
  */
-var nosqlProxy = require("./../db/nosqlProxy"),
-    mysqlProxy = require("./../db/mysqlProxy"),
+var dataProxyFC = require("./../db/dataProxyFC"),
+    nosqlProxy = dataProxyFC.getNoSqlProxy(dataProxyFC.C.DEFAULT_NOSQLDB),
+    mysqlProxy = dataProxyFC.getSqlProxy(dataProxyFC.C.DEFAULT_SQLDB),
     async = require ('async'),
     logger = require("../logger").getLogger(),
     self = this,
@@ -15,6 +16,9 @@ var nosqlProxy = require("./../db/nosqlProxy"),
 function Action(){
 
 }
+
+Action.prototype = base;
+
 Action.prototype.do = function(req, res, next){
     var params = req.params;
     var that = this;
@@ -91,15 +95,16 @@ Action.prototype.do = function(req, res, next){
             }
         );
     }
-    //分解步骤
-    function adjustDendency(masterTable,subTable,callback){
+    //分解步骤   实现错误，再实现
+    function adjustDendency(masterID,masterTable,callback){
         //如果有被其他数据关联则不允许删除
         //查找元数据表，找到当前与table有关联关系的表
-        nosqlProxy.get(subTable,"metaTable",function(err,meta){
+        nosqlProxy.get(masterTable,"metaTable",function(err,meta){
             if(err){
                 doError(callback,err)
             }
-            nosqlProxy.query(meta.name,function(record){
+            //遍历meta.antidependences,看这表是否有数据引用masterID，否在不允许删除
+            nosqlProxy.query(meta.id,{},null,null,null,function(record){
                 if(record[subTable]){
                     for(var i=0;i<record[subTable].length;i++){
                         if(record[subTable][i].id == params.subId){

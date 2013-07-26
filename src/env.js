@@ -11,8 +11,7 @@ global.doResopnse = doResopnse;
 var logger = require("./logger").getLogger();
 
 function doError(callback,err){
-    logger.error(err);
-    logger.error(err.stack);
+    logger.error(new Error(err.msg,err.name));
     callback(err);
 }
 function doResopnse(req,res,jsonObj){

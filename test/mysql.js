@@ -1,7 +1,9 @@
 var assert = require("assert"),
     mysql = require('mysql'),
     async = require("async"),
-    mysqlProxy = require("../src/db/mysqlProxy");
+    dataProxyFC = require("./../src/db/dataProxyFC"),
+    mysqlProxy = dataProxyFC.getSqlProxy(dataProxyFC.C.DEFAULT_SQLDB);
+
 describe('Mysql', function(){
 
     describe('#getUniqueId()', function(){

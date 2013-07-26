@@ -5,17 +5,18 @@
  * Time: 下午2:52
  * To change this template use File | Settings | File Templates.
  */
-var nosqlProxy = require("./../db/nosqlProxy"),
+var nosqlProxyFC = require("./../db/dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
+
     logger = require("../logger").getLogger(),
     async = require ('async'),
     _ = require("underscore"),
     base = require("./base"),
     self = this;
 function Action(){
+
 }
 Action.prototype.do = function(req, res, next){
-    console.log(req.user);
-
     var that = this;
     var params = req.params;
     //查询关系
@@ -46,11 +47,14 @@ Action.prototype.do = function(req, res, next){
         );
 
         function querySubRecord(masterTable,masterRecord,callback){
-            nosqlProxy.query(params.relation,function(record){
+            nosqlProxy.query(params.relation,{},null,null,null,function(record){
                 return true;
             },function(err,result){
                 result = _.filter(result,function(record){
                     var relationDatas = record[masterTable];
+                    if(!relationDatas){
+                        return false;
+                    }
                     for(var i=0;i<relationDatas.length;i++){
                         if(relationDatas[i].id == params.id){
                             return true;
@@ -72,7 +76,7 @@ Action.prototype.do = function(req, res, next){
                 callback(null,[]);
                 return;
             }
-            nosqlProxy.query(params.relation,function(record){
+            nosqlProxy.query(params.relation,{},null,null,null,function(record){
                 return true;
             },function(err,result){
 
@@ -120,6 +124,10 @@ Action.prototype.do = function(req, res, next){
                 doError(callback,err)
                 return;
             }
+            if(!meta){
+                doError(callback,{name:"metaTableNotInt",msg:"metaTable not init!"})
+                return;
+            }
             var antidependences = {};
             async.each(meta.antidependences,getAntiDependencies,function(err){
                 if(err){
@@ -130,7 +138,7 @@ Action.prototype.do = function(req, res, next){
             })
             function getAntiDependencies(table,callback){
                 nosqlProxy.getConn(function(err,conn){
-                    nosqlProxy.getR().db('planx_graph_r').tableList().run(conn,function(err,result){
+                    nosqlProxy.tableList(function(err,result){
                         if(result.indexOf(table) == -1){
                             callback(null,masterRecord);
                         }else{
@@ -139,7 +147,7 @@ Action.prototype.do = function(req, res, next){
                     });
                 });
                 function setAntiDependencies(tabel,callback){
-                    nosqlProxy.query(table,function(record){
+                    nosqlProxy.query(table,{},null,null,null,function(record){
                         return true;
                     },function(err,result){
                         if(err){

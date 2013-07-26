@@ -5,8 +5,9 @@
  * Time: 下午2:52
  * To change this template use File | Settings | File Templates.
  */
-var nosqlProxy = require("./../db/nosqlProxy"),
-    mysqlProxy = require("../db/mysqlProxy"),
+var dataProxyFC = require("./../db/dataProxyFC"),
+    nosqlProxy = dataProxyFC.getNoSqlProxy(dataProxyFC.C.DEFAULT_NOSQLDB),
+    mysqlProxy = dataProxyFC.getSqlProxy(dataProxyFC.C.DEFAULT_SQLDB),
     logger = require("../logger").getLogger(),
     async = require("async"),
     _ = require("underscore"),
@@ -21,6 +22,7 @@ Action.prototype.do = function(req, res, next){
         postData = req.body,
         insertTable;
     if(params.id && params.relation){
+
         //查找主ID对应的表
         //获取主对象
         //获取新增对象唯一ID
@@ -55,11 +57,11 @@ Action.prototype.do = function(req, res, next){
         }
         async.waterfall(
             [init,getUniqueId,doInsertNewRecord,updateRouter],
-            function(err,newRecord){
+            function(err,mastertable,newrecord,masterRecord){
                 if(err){
                     doResopnse(req,res,err);
                 }else{
-                    doResopnse(req,res,newRecord);
+                    doResopnse(req,res,newrecord);
                 }
             }
         );
@@ -80,7 +82,6 @@ Action.prototype.do = function(req, res, next){
                 var newrecord = postData;
                 newrecord["id"] = id;
 
-                //2、增加主对象到从对象的关系
                 if(masterRecord){
                     //1、增加从对象到主对象的关系
                     if(!newrecord[mastertable]){

@@ -10,7 +10,8 @@ var fs = require("fs"),
     logger = require("../logger").getLogger(),
     _ = require("underscore"),
     async = require("async"),
-    nosqlProxy = require("./nosqlProxy"),
+    nosqlProxyFC = require("./dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
     self = this;
 function Migration(cfgPath){
     this.cfgPath = cfgPath;
@@ -65,9 +66,10 @@ var dbCommands = {
             }
         })
         function createDB(db,callback){
-            nosqlProxy.getR().dbList().run(conn,function(err,result){
+
+            nosqlProxy.dbList(function(err,result){
                 if(result.indexOf(db.name) == -1){
-                    nosqlProxy.dbCreate(db.name,db.option,function(err){
+                    nosqlProxy.dbCreate(db.option,function(err){
                         if(err){
                             doError(callback,err);
                         }else{
@@ -89,22 +91,21 @@ var dbCommands = {
             }
         })
         function createTable(table,callback){
-            nosqlProxy.getR().db(change.dbName).tableList().run(conn,function(err,result){
-                    if(result.indexOf(table.name) == -1){
-                        nosqlProxy.tableCreate(table.name,table.option,function(err){
-                            console.log(table.name);
-                            if(err){
-                                doError(callback,err);
-                            }else{
-                                callback(null)
-                            }
-                        })
-                    }else{
+            nosqlProxy.tableList(function(err,result){
+                if(result.indexOf(table.id) == -1){
+                    nosqlProxy.tableCreate(table.id,table.option,function(err){
+                        console.log(table.id);
+                        if(err){
+                            doError(callback,err);
+                        }else{
+                            callback(null)
+                        }
+                    })
+                }else{
 
-                        callback(null)
-                    }
-            });
-
+                    callback(null)
+                }
+            })
         }
     },
     "execCommand":function(conn,change,version,callback){

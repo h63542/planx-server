@@ -5,14 +5,20 @@
  * Time: 下午8:17
  * To change this template use File | Settings | File Templates.
  */
-var DBNAME = "planx_graph_r",
-    logger = require("../logger").getLogger(),
+var logger = require("../logger").getLogger(),
     r = require("rethinkdb"),
     self = this;
     self.r = r;
 
 RethinkdbProxy.prototype.get = function(id,table,callback){
-    self.r.table(table).get(id).run(self.conn, function(err, result){
+    var that = this;
+
+    if(that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.table(table).get(id).run(that.conn, function(err, result){
         if(err) {
             logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
             callback(err);
@@ -24,7 +30,14 @@ RethinkdbProxy.prototype.get = function(id,table,callback){
 }
 
 RethinkdbProxy.prototype.update = function(id,table,record,callback){
-    self.r.table(table).get(id).update(record).run(self.conn, function(err, result){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.table(table).get(id).update(record).run(that.conn, function(err, result){
         if(err) {
             logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
             callback(err);
@@ -36,7 +49,14 @@ RethinkdbProxy.prototype.update = function(id,table,record,callback){
 }
 
 RethinkdbProxy.prototype.insert = function(table,record,callback){
-    self.r.table(table).insert(record).run(self.conn, function(err, result){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.table(table).insert(record).run(that.conn, function(err, result){
         if(err) {
             logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
             callback(err);
@@ -49,7 +69,14 @@ RethinkdbProxy.prototype.insert = function(table,record,callback){
 
 
 RethinkdbProxy.prototype.delete = function(id,table,callback){
-    self.r.table(table).get(id).delete().run(self.conn, function(err, result){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.table(table).get(id).delete().run(that.conn, function(err, result){
         if(err) {
             logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
             callback(err);
@@ -60,11 +87,14 @@ RethinkdbProxy.prototype.delete = function(id,table,callback){
     })
 }
 
-RethinkdbProxy.prototype.query = function(table,filter,callback){
+
+RethinkdbProxy.prototype.query = function(table,option,page,pageno,sort,filter,callback){
+    var that = this;
+
     this.getConn(doquery);
     function doquery(err,conn){
         if(filter && typeof(filter)=="function"){
-            self.r.table(table).filter(filter).run(self.conn,function(err, rows){
+            self.r.table(table).filter(filter).run(conn,function(err, rows){
                 if(err) {
                     logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
                     doError(callback,err);
@@ -80,7 +110,7 @@ RethinkdbProxy.prototype.query = function(table,filter,callback){
                 }
             });
         }else{
-            self.r.table(table).run(self.conn,function(err, rows){
+            self.r.table(table).run(conn,function(err, rows){
                 if(err) {
                     logger.debug("[ERROR] findById: %s:%s\n%s", err.name, err.msg, err.message);
                     callback(err);
@@ -102,7 +132,14 @@ RethinkdbProxy.prototype.query = function(table,filter,callback){
 }
 
 RethinkdbProxy.prototype.tableCreate = function(tableName,option,callback){
-    self.r.db(DBNAME).tableCreate(tableName,option).run(self.conn, function(err){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.db(that.dbName).tableCreate(tableName,option).run(that.conn, function(err){
         if(err){
             doError(callback,err);
         }
@@ -112,51 +149,101 @@ RethinkdbProxy.prototype.tableCreate = function(tableName,option,callback){
     })
 }
 
-RethinkdbProxy.prototype.dbCreate = function(dbName,option,callback){
-    self.r.dbCreate(dbName).run(self.conn, function(err){
+RethinkdbProxy.prototype.dbCreate = function(option,callback){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.dbCreate(that.dbName).run(that.conn, function(err){
         if(err){
             doError(callback,err);
         }
         else {
-            callback(null,dbName);
+            callback(null,that.dbName);
         }
     })
 }
 
 RethinkdbProxy.prototype.initDBConn = function(callback){
+    var that = this;
+
     this.getConn(function(err,conn){
         self.r = r;
-        self.conn = conn;
+        that.conn = conn;
         callback(err,conn);
 
     });
 }
 
 RethinkdbProxy.prototype.getConn = function(callback){
-    if(!self.conn){
+    var that = this;
+
+    if(!that.conn){
         r.connect({host:'localhost', port:28015},
             function(err, _conn) {
                 if(err){
                     logger.error(err);
                     throw err;
                 }else{
-                    self.conn = _conn;
-                    self.conn.use(DBNAME);
+                    that.conn = _conn;
+                    that.conn.use(that.dbName);
                     callback(null,_conn);
                 }
 
             })
     }else{
-        callback(null,self.conn);
+        callback(null,that.conn);
     }
 }
-RethinkdbProxy.prototype.getR = function(){
-    return self.r;
+
+mongodbProxy.prototype.tableList = function(callback){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.db(that.dbName).tableList().run(that.conn,function(err,result){
+        if(err){
+            logger.error(err);
+            callback(err);
+        }else{
+            callback(null,result);
+        }
+
+    });
+}
+
+mongodbProxy.prototype.dbList = function(callback){
+    var that = this;
+
+    if(!that.conn){
+        callback("proxy not init connection!");
+        return;
+    }
+
+    self.r.dbList().run(that.conn,function(err,result){
+        if(err){
+            logger.error(err);
+            callback(err);
+        }else{
+            callback(null,result);
+        }
+
+    });
+}
+
+mongodbProxy.prototype.db = function(dbName){
+    this.dbName = dbName;
 }
 
 
-
-function RethinkdbProxy(){
-
+function RethinkdbProxy(dbName){
+    this.dbName = dbName;
 }
-module.exports = new RethinkdbProxy();
+
+module.exports = RethinkdbProxy();

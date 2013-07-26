@@ -2,12 +2,15 @@ var assert = require("assert"),
     async = require ('async'),
     env = require("./../../src/env"),
     mysql = require('mysql'),
-    nosqlProxy = require("./../../src/db/nosqlProxy"),
+    _ = require("underscore"),
+
+    nosqlProxyFC = require("./../../src/db/dataProxyFC"),
+    nosqlProxy = nosqlProxyFC.getNoSqlProxy(nosqlProxyFC.C.DEFAULT_NOSQLDB),
     sinon = require("sinon");
 global.nodeID = 1;
 
 var post = require("./../../src/graph/post");
-describe('DataBaseUtilTest', function(){
+describe('PostUtilTest', function(){
     var enterpriseId;
     before(function(done){
         initEnterprise(function(err,id){
@@ -60,16 +63,12 @@ describe('DataBaseUtilTest', function(){
 })
 function initEnterprise(callback){
     nosqlProxy.getConn(function(err,conn){
-        nosqlProxy.getR().table("enterprise").filter(function(record){return true}).run(conn,function(err,row){
-            if(err){
-                throw err;
-            }
-            row.toArray(function(err, result) {
+        var qcallback = function(err,result){
                 if(err) {
                     debug("[ERROR] %s:%s\n%s", err.name, err.msg, err.message);
                     res.send([]);
                 }
-                if(result.length > 0){
+                if(result && result.length > 0){
                     callback(null,result[0].id);
                 }else{
                     var req = {
@@ -87,9 +86,8 @@ function initEnterprise(callback){
                         }
                     };
                     var res = {
-                        end:function(msg){
-                            console.log(msg);
-                            callback(null,msg);
+                        end:function(record){
+                            callback(null, JSON.parse(record).id);
                         },
                         getHeader:function(){
                             return "";
@@ -104,8 +102,7 @@ function initEnterprise(callback){
                     //插入测试企业数据
                     post.do(req,res,next);
                 }
-            });
-        });
-
+        }
+        nosqlProxy.query("enterprise",{},null,null,null,function(record){return true},qcallback);
     });
 }
